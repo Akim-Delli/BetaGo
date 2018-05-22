@@ -1,3 +1,8 @@
+import copy
+
+from gotypes import Player
+
+
 class Move:
     def __init__(self, point=None, is_pass=False, is_resign=False):
         assert (point is not None) ^ is_pass ^ is_resign
@@ -99,7 +104,6 @@ class Board:
                     neighbor_string.add_liberty(point)
             self._grid[point] = None
 
-
     def is_on_grid(self, point):
 
         return 1 <= point.row <= self.num_rows and \
@@ -116,3 +120,30 @@ class Board:
         if string is None:
             return None
         return string
+
+
+class GameState:
+    def __init__(self, board, next_player, previous, move):
+        self.board = board
+        self.next_player = next_player
+        self.previous_state = previous
+        self.last_move = move
+
+    def apply_move(self, player, move):
+        if player != self.next_player:
+            raise ValueError(player)
+        if move.is_play:
+            next_board = copy.deepcopy(self.board)
+            next_board.place_stone(player, move.point)
+        else:
+            next_board = self.board
+
+        return GameState(next_board, player.other, self, move)
+
+    @staticmethod
+    def new_game(cls, board_size):
+        if isinstance(board_size, int):
+            board_size = (board_size, board_size)
+        board = Board(*board_size)
+
+        return GameState(board, Player.black, None, None)
