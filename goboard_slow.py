@@ -86,7 +86,7 @@ class Board:
 
         for same_color_string in adjacent_same_color:
             new_string = new_string.merged_with(same_color_string)
-        for new_string_point in new_string.points:
+        for new_string_point in new_string.stones:
             self._grid[new_string_point] = new_string
         for other_color_string in adjacent_opposite_color:
             other_color_string.remove.liberty(point)
@@ -147,3 +147,14 @@ class GameState:
         board = Board(*board_size)
 
         return GameState(board, Player.black, None, None)
+
+    def is_over(self):
+        if self.last_move is None:
+            return False
+        if self.last_move,is_resign:
+            return True
+        second_last_move = self.previous_state.last_move
+        if second_last_move is None:
+            return False
+        return self.last_move.is_pass and second_last_move.is_pass
+        
