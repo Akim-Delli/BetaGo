@@ -151,10 +151,9 @@ class GameState:
     def is_over(self):
         if self.last_move is None:
             return False
-        if self.last_move,is_resign:
+        if self.last_move.is_resign:
             return True
         second_last_move = self.previous_state.last_move
         if second_last_move is None:
             return False
         return self.last_move.is_pass and second_last_move.is_pass
-        
